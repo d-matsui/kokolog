@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import FormInput from "../components/FormInput";
 import MoodInput from "../components/MoodInput";

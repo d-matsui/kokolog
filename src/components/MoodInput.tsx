@@ -1,4 +1,3 @@
-import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { EMOTION_TAGS, EMOTIONS } from "../constants/emotions";
 import { styles } from "../styles/styles";

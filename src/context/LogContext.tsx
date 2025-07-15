@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, {
+import {
 	createContext,
 	type ReactNode,
 	useContext,

@@ -1,4 +1,4 @@
-import React, { type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
