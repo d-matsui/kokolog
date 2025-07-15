@@ -160,6 +160,10 @@ export const styles = StyleSheet.create({
 		alignItems: "center",
 		marginTop: 10,
 	},
+	chart: {
+		marginVertical: 8,
+		borderRadius: 16,
+	},
 	chartWrapper: {
 		flexDirection: "row",
 		alignItems: "flex-end",
