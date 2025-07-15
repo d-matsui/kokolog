@@ -1,5 +1,12 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, {
+	createContext,
+	type ReactNode,
+	useContext,
+	useEffect,
+	useMemo,
+	useState,
+} from "react";
 import {
 	ActivityIndicator,
 	Alert,
@@ -16,9 +23,39 @@ import {
 	useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
-const EMOTIONS = {
+// --- 型定義 ---
+interface Mood {
+	name: string;
+	level: number;
+}
+
+interface Log {
+	id: string;
+	date: string;
+	autoThought: string;
+	situation: string;
+	beforeMoods: Mood[];
+	afterMoods: Mood[];
+	evidence: string;
+	counterEvidence: string;
+	newThought: string;
+	isFavorite: boolean;
+}
+
+interface LogContextType {
+	logs: Log[];
+	isLoading: boolean;
+	addLog: (log: Omit<Log, "id" | "date">) => void;
+	updateLog: (log: Log) => void;
+	deleteLog: (logId: string) => void;
+	toggleFavorite: (logId: string) => void;
+	clearAllLogs: () => Promise<void>;
+}
+
+// --- 定数定義 ---
+const EMOTIONS: { [key: string]: string } = {
 	イライラ: "😠",
-	不安: "😥",
+	不安: "�",
 	ゆううつ: "😞",
 	焦り: "😰",
 	虚しさ: "🫥",
@@ -28,10 +65,20 @@ const EMOTION_TAGS = Object.keys(EMOTIONS);
 const MAX_MOOD_LEVEL = 5;
 const BAR_HEIGHT_MULTIPLIER = 22;
 
-const LogContext = createContext();
+// --- Contextの作成 ---
+const LogContext = createContext<LogContextType | undefined>(undefined);
 
-const LogProvider = ({ children }) => {
-	const [logs, setLogs] = useState([]);
+const useLogs = () => {
+	const context = useContext(LogContext);
+	if (context === undefined) {
+		throw new Error("useLogs must be used within a LogProvider");
+	}
+	return context;
+};
+
+// --- LogProviderコンポーネント ---
+const LogProvider = ({ children }: { children: ReactNode }) => {
+	const [logs, setLogs] = useState<Log[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
@@ -61,8 +108,8 @@ const LogProvider = ({ children }) => {
 		}
 	}, [logs, isLoading]);
 
-	const addLog = (log) => {
-		const newLog = {
+	const addLog = (log: Omit<Log, "id" | "date">) => {
+		const newLog: Log = {
 			...log,
 			id: Date.now().toString(),
 			date: new Date().toISOString(),
@@ -70,16 +117,16 @@ const LogProvider = ({ children }) => {
 		setLogs([newLog, ...logs]);
 	};
 
-	const updateLog = (logToUpdate) => {
+	const updateLog = (logToUpdate: Log) => {
 		const updatedLog = { ...logToUpdate, date: new Date().toISOString() };
 		setLogs(logs.map((log) => (log.id === updatedLog.id ? updatedLog : log)));
 	};
 
-	const deleteLog = (logId) => {
+	const deleteLog = (logId: string) => {
 		setLogs(logs.filter((log) => log.id !== logId));
 	};
 
-	const toggleFavorite = (logId) => {
+	const toggleFavorite = (logId: string) => {
 		setLogs(
 			logs.map((log) =>
 				log.id === logId ? { ...log, isFavorite: !log.isFavorite } : log,
@@ -97,7 +144,7 @@ const LogProvider = ({ children }) => {
 		}
 	};
 
-	const value = {
+	const value: LogContextType = {
 		logs,
 		isLoading,
 		addLog,
@@ -110,15 +157,16 @@ const LogProvider = ({ children }) => {
 	return <LogContext.Provider value={value}>{children}</LogContext.Provider>;
 };
 
+// --- メインアプリケーションコンポーネント ---
 function KokoroLogApp() {
 	const [currentView, setCurrentView] = useState("main");
 	const [activeTab, setActiveTab] = useState("home");
-	const [editingLog, setEditingLog] = useState(null);
+	const [editingLog, setEditingLog] = useState<Partial<Log> | null>(null);
 	const [quickMemo, setQuickMemo] = useState("");
 
-	const { isLoading, addLog, updateLog, deleteLog } = useContext(LogContext);
+	const { isLoading, addLog, updateLog, deleteLog } = useLogs();
 
-	const showFormScreen = (log) => {
+	const showFormScreen = (log?: Log | null) => {
 		setEditingLog(log || { autoThought: quickMemo });
 		setCurrentView("form");
 	};
@@ -145,8 +193,8 @@ function KokoroLogApp() {
 		Alert.alert("保存しました", "記録一覧から後で編集できます。");
 	};
 
-	const handleSaveLog = (logToSave) => {
-		if (logToSave.id) {
+	const handleSaveLog = (logToSave: Log | Omit<Log, "id" | "date">) => {
+		if ("id" in logToSave) {
 			updateLog(logToSave);
 		} else {
 			addLog(logToSave);
@@ -155,7 +203,7 @@ function KokoroLogApp() {
 		showMainView();
 	};
 
-	const handleDeleteLog = (logId) => {
+	const handleDeleteLog = (logId: string) => {
 		deleteLog(logId);
 		showMainView();
 	};
@@ -180,7 +228,7 @@ function KokoroLogApp() {
 			);
 		}
 
-		let screen;
+		let screen: React.ReactElement;
 		switch (activeTab) {
 			case "home":
 				screen = (
@@ -202,7 +250,14 @@ function KokoroLogApp() {
 				screen = <KizukiScreen onSelectLog={showFormScreen} />;
 				break;
 			default:
-				screen = <HomeScreen />;
+				screen = (
+					<HomeScreen
+						quickMemo={quickMemo}
+						setQuickMemo={setQuickMemo}
+						onShowForm={showFormScreen}
+						onQuickSave={handleQuickSave}
+					/>
+				);
 		}
 		return (
 			<View style={{ flex: 1 }}>
@@ -230,7 +285,51 @@ export default function App() {
 	);
 }
 
-const ScreenWrapper = ({ children, noPadding = false }) => {
+// --- 共通コンポーネントの型定義 ---
+interface ScreenWrapperProps {
+	children: React.ReactNode;
+	noPadding?: boolean;
+}
+interface FormInputProps {
+	label: string;
+	value: string;
+	onChangeText: (text: string) => void;
+	placeholder?: string;
+	multiline?: boolean;
+}
+interface MoodInputProps {
+	label: string;
+	moods: Mood[];
+	setMoods: (moods: Mood[]) => void;
+}
+interface TabBarProps {
+	activeTab: string;
+	onTabPress: (tab: string) => void;
+}
+interface HomeScreenProps {
+	quickMemo: string;
+	setQuickMemo: (text: string) => void;
+	onShowForm: (log?: Log | null) => void;
+	onQuickSave: () => void;
+}
+interface FormScreenProps {
+	onGoBack: () => void;
+	onSave: (log: Log | Omit<Log, "id" | "date">) => void;
+	onDelete: (logId: string) => void;
+	initialLog: Partial<Log> | null;
+}
+interface ListScreenProps {
+	onSelectLog: (log: Log) => void;
+}
+interface GraphScreenProps {
+	onSelectLog: (log: Log) => void;
+}
+interface KizukiScreenProps {
+	onSelectLog: (log: Log) => void;
+}
+
+// --- 共通コンポーネント ---
+const ScreenWrapper = ({ children, noPadding = false }: ScreenWrapperProps) => {
 	const insets = useSafeAreaInsets();
 	return (
 		<View
@@ -252,7 +351,7 @@ const FormInput = ({
 	onChangeText,
 	placeholder,
 	multiline = false,
-}) => (
+}: FormInputProps) => (
 	<View style={styles.inputGroup}>
 		<Text style={styles.formLabel}>{label}</Text>
 		<TextInput
@@ -264,14 +363,15 @@ const FormInput = ({
 		/>
 	</View>
 );
-const MoodInput = ({ label, moods, setMoods }) => {
-	const addMood = (name) => {
+const MoodInput = ({ label, moods, setMoods }: MoodInputProps) => {
+	const addMood = (name: string) => {
 		if (!moods.some((m) => m.name === name))
 			setMoods([...moods, { name, level: 3 }]);
 	};
-	const updateMoodLevel = (name, level) =>
+	const updateMoodLevel = (name: string, level: number) =>
 		setMoods(moods.map((m) => (m.name === name ? { ...m, level } : m)));
-	const removeMood = (name) => setMoods(moods.filter((m) => m.name !== name));
+	const removeMood = (name: string) =>
+		setMoods(moods.filter((m) => m.name !== name));
 	return (
 		<View style={styles.inputGroup}>
 			<Text style={styles.formLabel}>{label}</Text>
@@ -319,7 +419,7 @@ const MoodInput = ({ label, moods, setMoods }) => {
 		</View>
 	);
 };
-const TabBar = ({ activeTab, onTabPress }) => {
+const TabBar = ({ activeTab, onTabPress }: TabBarProps) => {
 	const insets = useSafeAreaInsets();
 	return (
 		<View style={[styles.tabBar, { paddingBottom: insets.bottom }]}>
@@ -372,8 +472,15 @@ const TabBar = ({ activeTab, onTabPress }) => {
 		</View>
 	);
 };
-const HomeScreen = ({ quickMemo, setQuickMemo, onShowForm, onQuickSave }) => {
-	const { clearAllLogs } = useContext(LogContext);
+
+// --- 各画面コンポーネント ---
+const HomeScreen = ({
+	quickMemo,
+	setQuickMemo,
+	onShowForm,
+	onQuickSave,
+}: HomeScreenProps) => {
+	const { clearAllLogs } = useLogs();
 	const confirmClear = () =>
 		Alert.alert("データの完全消去", "本当にすべてのデータを削除しますか？", [
 			{ text: "キャンセル" },
@@ -404,7 +511,7 @@ const HomeScreen = ({ quickMemo, setQuickMemo, onShowForm, onQuickSave }) => {
 					</TouchableOpacity>
 					<TouchableOpacity
 						style={[styles.button, styles.blueButton]}
-						onPress={onShowForm}
+						onPress={() => onShowForm()}
 					>
 						<Text style={styles.buttonTextWhite}>7コラムを書く</Text>
 					</TouchableOpacity>
@@ -416,21 +523,32 @@ const HomeScreen = ({ quickMemo, setQuickMemo, onShowForm, onQuickSave }) => {
 		</ScreenWrapper>
 	);
 };
-const FormScreen = ({ onGoBack, onSave, onDelete, initialLog }) => {
+const FormScreen = ({
+	onGoBack,
+	onSave,
+	onDelete,
+	initialLog,
+}: FormScreenProps) => {
 	const [situation, setSituation] = useState(initialLog?.situation || "");
-	const [beforeMoods, setBeforeMoods] = useState(initialLog?.beforeMoods || []);
+	const [beforeMoods, setBeforeMoods] = useState<Mood[]>(
+		initialLog?.beforeMoods || [],
+	);
 	const [autoThought, setAutoThought] = useState(initialLog?.autoThought || "");
 	const [evidence, setEvidence] = useState(initialLog?.evidence || "");
 	const [counterEvidence, setCounterEvidence] = useState(
 		initialLog?.counterEvidence || "",
 	);
 	const [newThought, setNewThought] = useState(initialLog?.newThought || "");
-	const [afterMoods, setAfterMoods] = useState(initialLog?.afterMoods || []);
+	const [afterMoods, setAfterMoods] = useState<Mood[]>(
+		initialLog?.afterMoods || [],
+	);
 	const [isFavorite, setIsFavorite] = useState(initialLog?.isFavorite || false);
 	const isEditing = !!initialLog?.id;
 	const handleSave = () =>
 		onSave({
 			...initialLog,
+			id: initialLog?.id || "",
+			date: initialLog?.date || "",
 			situation,
 			beforeMoods,
 			autoThought,
@@ -446,7 +564,7 @@ const FormScreen = ({ onGoBack, onSave, onDelete, initialLog }) => {
 				{ text: "キャンセル" },
 				{
 					text: "削除する",
-					onPress: () => onDelete(initialLog.id),
+					onPress: () => onDelete(initialLog.id!),
 					style: "destructive",
 				},
 			]);
@@ -550,8 +668,8 @@ const FormScreen = ({ onGoBack, onSave, onDelete, initialLog }) => {
 		</ScreenWrapper>
 	);
 };
-const ListScreen = ({ onSelectLog }) => {
-	const { logs, toggleFavorite } = useContext(LogContext);
+const ListScreen = ({ onSelectLog }: ListScreenProps) => {
+	const { logs, toggleFavorite } = useLogs();
 	return (
 		<ScreenWrapper noPadding>
 			<View style={styles.screen}>
@@ -559,70 +677,70 @@ const ListScreen = ({ onSelectLog }) => {
 					<Text style={styles.headerTitle}>記録一覧</Text>
 				</View>
 				<ScrollView style={styles.listContainer}>
-					{logs.length === 0
-						? <Text style={styles.emptyText}>まだ記録がありません。</Text>
-						: logs.map((log) => {
-								const d = new Date(log.date);
-								const weekdays = ["日", "月", "火", "水", "木", "金", "土"];
-								const time = `${String(d.getHours()).padStart(2, "0")}:${String(
-									d.getMinutes(),
-								).padStart(2, "0")}`;
-								const formattedDate = `${d.getFullYear()}年${
-									d.getMonth() + 1
-								}月${d.getDate()}日(${weekdays[d.getDay()]}) ${time}`;
-								return (
-									<TouchableOpacity
-										key={log.id}
-										style={styles.logItem}
-										onPress={() => onSelectLog(log)}
-									>
-										<View style={styles.logItemHeader}>
-											<Text style={styles.logDate}>{formattedDate}</Text>
-											<TouchableOpacity
-												onPress={() => toggleFavorite(log.id)}
-												style={styles.logFavoriteButton}
+					{logs.length === 0 ? (
+						<Text style={styles.emptyText}>まだ記録がありません。</Text>
+					) : (
+						logs.map((log) => {
+							const d = new Date(log.date);
+							const weekdays = ["日", "月", "火", "水", "木", "金", "土"];
+							const time = `${String(d.getHours()).padStart(2, "0")}:${String(
+								d.getMinutes(),
+							).padStart(2, "0")}`;
+							const formattedDate = `${d.getFullYear()}年${
+								d.getMonth() + 1
+							}月${d.getDate()}日(${weekdays[d.getDay()]}) ${time}`;
+							return (
+								<TouchableOpacity
+									key={log.id}
+									style={styles.logItem}
+									onPress={() => onSelectLog(log)}
+								>
+									<View style={styles.logItemHeader}>
+										<Text style={styles.logDate}>{formattedDate}</Text>
+										<TouchableOpacity
+											onPress={() => toggleFavorite(log.id)}
+											style={styles.logFavoriteButton}
+										>
+											<Text
+												style={
+													log.isFavorite
+														? styles.favoriteIconActive
+														: styles.favoriteIcon
+												}
 											>
-												<Text
-													style={
-														log.isFavorite
-															? styles.favoriteIconActive
-															: styles.favoriteIcon
-													}
-												>
-													★
+												★
+											</Text>
+										</TouchableOpacity>
+									</View>
+									<Text style={styles.logThought}>{log.autoThought}</Text>
+									<View style={styles.moodContainer}>
+										<View style={{ flex: 1 }}>
+											{log.beforeMoods?.map((mood) => (
+												<Text key={mood.name} style={styles.moodText}>
+													{EMOTIONS[mood.name]?.repeat(mood.level)} {mood.name}
 												</Text>
-											</TouchableOpacity>
+											))}
 										</View>
-										<Text style={styles.logThought}>{log.autoThought}</Text>
-										<View style={styles.moodContainer}>
-											<View style={{ flex: 1 }}>
-												{log.beforeMoods?.map((mood) => (
-													<Text key={mood.name} style={styles.moodText}>
-														{EMOTIONS[mood.name]?.repeat(mood.level)}{" "}
-														{mood.name}
-													</Text>
-												))}
-											</View>
-											<Text style={styles.moodArrow}>&rarr;</Text>
-											<View style={{ flex: 1 }}>
-												{log.afterMoods?.map((mood) => (
-													<Text key={mood.name} style={styles.moodText}>
-														{EMOTIONS[mood.name]?.repeat(mood.level)}{" "}
-														{mood.name}
-													</Text>
-												))}
-											</View>
+										<Text style={styles.moodArrow}>&rarr;</Text>
+										<View style={{ flex: 1 }}>
+											{log.afterMoods?.map((mood) => (
+												<Text key={mood.name} style={styles.moodText}>
+													{EMOTIONS[mood.name]?.repeat(mood.level)} {mood.name}
+												</Text>
+											))}
 										</View>
-									</TouchableOpacity>
-								);
-							})}
+									</View>
+								</TouchableOpacity>
+							);
+						})
+					)}
 				</ScrollView>
 			</View>
 		</ScreenWrapper>
 	);
 };
-const GraphScreen = ({ onSelectLog }) => {
-	const { logs } = useContext(LogContext);
+const GraphScreen = ({ onSelectLog }: GraphScreenProps) => {
+	const { logs } = useLogs();
 
 	const availableEmotions = useMemo(
 		() => [
@@ -637,7 +755,7 @@ const GraphScreen = ({ onSelectLog }) => {
 		[logs],
 	);
 
-	const [selectedEmotion, setSelectedEmotion] = useState(null);
+	const [selectedEmotion, setSelectedEmotion] = useState<string | null>(null);
 
 	useEffect(() => {
 		if (!selectedEmotion && availableEmotions.length > 0) {
@@ -651,7 +769,7 @@ const GraphScreen = ({ onSelectLog }) => {
 						log.beforeMoods?.some((m) => m.name === selectedEmotion) ||
 						log.afterMoods?.some((m) => m.name === selectedEmotion),
 				)
-				.sort((a, b) => new Date(a.date) - new Date(b.date))
+				.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
 				.slice(-7)
 		: [];
 	return (
@@ -689,72 +807,68 @@ const GraphScreen = ({ onSelectLog }) => {
 					</ScrollView>
 				</View>
 				<View style={styles.chartContainer}>
-					{filteredLogs.length > 0
-						? <View style={styles.chartWrapper}>
-								<View style={styles.yAxisContainer}>
-									{[...Array(MAX_MOOD_LEVEL)].map((_, i) => {
-										const labelValue = MAX_MOOD_LEVEL - i;
-										return (
-											<Text
-												key={`yAxisLabel-${labelValue}`}
-												style={styles.yAxisLabel}
-											>
-												{labelValue}
-											</Text>
-										);
-									})}
-								</View>
-								<ScrollView
-									horizontal
-									showsHorizontalScrollIndicator={false}
-									contentContainerStyle={styles.barChart}
-								>
-									{filteredLogs.map((log) => {
-										const beforeMood = log.beforeMoods.find(
-											(m) => m.name === selectedEmotion,
-										);
-										const afterMood = log.afterMoods.find(
-											(m) => m.name === selectedEmotion,
-										);
-										const beforeLevel = beforeMood
-											? parseInt(beforeMood.level, 10)
-											: 0;
-										const afterLevel = afterMood
-											? parseInt(afterMood.level, 10)
-											: 0;
-										const d = new Date(log.date);
-										const dateLabel = `${d.getMonth() + 1}/${d.getDate()}`;
-										return (
-											<TouchableOpacity
-												key={log.id}
-												style={styles.barGroup}
-												onPress={() => onSelectLog(log)}
-											>
-												<View style={styles.barWrapper}>
-													<View
-														style={[
-															styles.bar,
-															styles.barBefore,
-															{ height: beforeLevel * BAR_HEIGHT_MULTIPLIER },
-														]}
-													/>
-													<View
-														style={[
-															styles.bar,
-															styles.barAfter,
-															{ height: afterLevel * BAR_HEIGHT_MULTIPLIER },
-														]}
-													/>
-												</View>
-												<Text style={styles.barLabel}>{dateLabel}</Text>
-											</TouchableOpacity>
-										);
-									})}
-								</ScrollView>
+					{filteredLogs.length > 0 ? (
+						<View style={styles.chartWrapper}>
+							<View style={styles.yAxisContainer}>
+								{[...Array(MAX_MOOD_LEVEL)].map((_, i) => {
+									const labelValue = MAX_MOOD_LEVEL - i;
+									return (
+										<Text
+											key={`yAxisLabel-${labelValue}`}
+											style={styles.yAxisLabel}
+										>
+											{labelValue}
+										</Text>
+									);
+								})}
 							</View>
-						: <Text style={styles.emptyText}>
-								表示するデータがありません。
-							</Text>}
+							<ScrollView
+								horizontal
+								showsHorizontalScrollIndicator={false}
+								contentContainerStyle={styles.barChart}
+							>
+								{filteredLogs.map((log) => {
+									const beforeMood = log.beforeMoods.find(
+										(m) => m.name === selectedEmotion,
+									);
+									const afterMood = log.afterMoods.find(
+										(m) => m.name === selectedEmotion,
+									);
+									const beforeLevel = beforeMood ? beforeMood.level : 0;
+									const afterLevel = afterMood ? afterMood.level : 0;
+									const d = new Date(log.date);
+									const dateLabel = `${d.getMonth() + 1}/${d.getDate()}`;
+									return (
+										<TouchableOpacity
+											key={log.id}
+											style={styles.barGroup}
+											onPress={() => onSelectLog(log)}
+										>
+											<View style={styles.barWrapper}>
+												<View
+													style={[
+														styles.bar,
+														styles.barBefore,
+														{ height: beforeLevel * BAR_HEIGHT_MULTIPLIER },
+													]}
+												/>
+												<View
+													style={[
+														styles.bar,
+														styles.barAfter,
+														{ height: afterLevel * BAR_HEIGHT_MULTIPLIER },
+													]}
+												/>
+											</View>
+											<Text style={styles.barLabel}>{dateLabel}</Text>
+										</TouchableOpacity>
+									);
+								})}
+							</ScrollView>
+						</View>
+					) : (
+						<Text style={styles.emptyText}>表示するデータがありません。</Text>
+					)}
 					<View style={styles.legendContainer}>
 						<View style={styles.legendItem}>
 							<View style={[styles.legendColor, styles.barBefore]} />
@@ -770,8 +884,8 @@ const GraphScreen = ({ onSelectLog }) => {
 		</ScreenWrapper>
 	);
 };
-const KizukiScreen = ({ onSelectLog }) => {
-	const { logs } = useContext(LogContext);
+const KizukiScreen = ({ onSelectLog }: KizukiScreenProps) => {
+	const { logs } = useLogs();
 	const favoriteLogs = logs.filter((log) => log.isFavorite);
 	return (
 		<ScreenWrapper noPadding>
@@ -780,26 +894,28 @@ const KizukiScreen = ({ onSelectLog }) => {
 					<Text style={styles.headerTitle}>大切な気づき</Text>
 				</View>
 				<ScrollView style={styles.listContainer}>
-					{favoriteLogs.length === 0
-						? <Text style={styles.emptyText}>
-								まだ「大切な気づき」がありません。
-							</Text>
-						: favoriteLogs.map((log) => {
-								const d = new Date(log.date);
-								const formattedDate = `${d.getFullYear()}年${
-									d.getMonth() + 1
-								}月${d.getDate()}日の記録より`;
-								return (
-									<TouchableOpacity
-										key={log.id}
-										style={styles.kizukiCard}
-										onPress={() => onSelectLog(log)}
-									>
-										<Text style={styles.kizukiText}>{log.newThought}</Text>
-										<Text style={styles.kizukiDate}>{formattedDate}</Text>
-									</TouchableOpacity>
-								);
-							})}
+					{favoriteLogs.length === 0 ? (
+						<Text style={styles.emptyText}>
+							まだ「大切な気づき」がありません。
+						</Text>
+					) : (
+						favoriteLogs.map((log) => {
+							const d = new Date(log.date);
+							const formattedDate = `${d.getFullYear()}年${
+								d.getMonth() + 1
+							}月${d.getDate()}日の記録より`;
+							return (
+								<TouchableOpacity
+									key={log.id}
+									style={styles.kizukiCard}
+									onPress={() => onSelectLog(log)}
+								>
+									<Text style={styles.kizukiText}>{log.newThought}</Text>
+									<Text style={styles.kizukiDate}>{formattedDate}</Text>
+								</TouchableOpacity>
+							);
+						})
+					)}
 				</ScrollView>
 			</View>
 		</ScreenWrapper>
