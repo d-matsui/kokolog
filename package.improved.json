@@ -1,0 +1,19 @@
+{
+	"scripts": {
+		"start": "expo start",
+		"android": "expo start --android",
+		"ios": "expo start --ios",
+		"web": "expo start --web",
+		"test": "jest",
+		"test:watch": "jest --watch",
+		"test:coverage": "jest --coverage",
+		"test:ci": "jest --ci --coverage --watchAll=false",
+		"test:update": "jest --updateSnapshot",
+		"test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
+		"lint": "npx @biomejs/biome lint src/",
+		"lint:fix": "npx @biomejs/biome lint --apply src/",
+		"format": "npx @biomejs/biome format --write src/",
+		"type-check": "tsc --noEmit",
+		"pre-commit": "npm run lint && npm run type-check && npm run test:ci"
+	}
+}
