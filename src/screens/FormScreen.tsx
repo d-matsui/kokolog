@@ -36,20 +36,34 @@ const FormScreen = ({
 
 	const isEditing = !!initialLog?.id;
 
-	const handleSave = () =>
-		onSave({
-			...initialLog,
-			id: initialLog?.id || "",
-			date: initialLog?.date || "",
-			situation,
-			beforeMoods,
-			autoThought,
-			evidence,
-			counterEvidence,
-			newThought,
-			afterMoods,
-			isFavorite,
-		});
+	const handleSave = () => {
+		if (isEditing) {
+			onSave({
+				...initialLog,
+				id: initialLog?.id || "",
+				date: initialLog?.date || "",
+				situation,
+				beforeMoods,
+				autoThought,
+				evidence,
+				counterEvidence,
+				newThought,
+				afterMoods,
+				isFavorite,
+			} as Log);
+		} else {
+			onSave({
+				situation,
+				beforeMoods,
+				autoThought,
+				evidence,
+				counterEvidence,
+				newThought,
+				afterMoods,
+				isFavorite,
+			});
+		}
+	};
 
 	const confirmDelete = () => {
 		if (initialLog?.id) {
