@@ -22,11 +22,8 @@ jobs:
     - name: Install dependencies
       run: npm ci
     
-    - name: Run Biome linter
+    - name: Run Biome linter and formatter check
       run: npm run lint
-    
-    - name: Run Biome formatter check
-      run: npx @biomejs/biome format --check src/
     
     - name: Run TypeScript type check
       run: npm run type-check

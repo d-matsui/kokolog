@@ -220,10 +220,12 @@ describe("FormScreen", () => {
 
 			// Get the delete confirmation function from the Alert.alert call
 			const alertCall = mockAlert.alert.mock.calls[0];
-			const deleteConfirmButton = alertCall[2].find(
+			const deleteConfirmButton = alertCall[2]?.find(
 				(button) => button.text === "削除する",
 			);
-			deleteConfirmButton.onPress();
+			if (deleteConfirmButton?.onPress) {
+				deleteConfirmButton.onPress();
+			}
 
 			expect(mockOnDelete).toHaveBeenCalledWith("1");
 		});
