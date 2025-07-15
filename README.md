@@ -3,7 +3,7 @@
 あなたの心に寄り添う、認知行動療法（CBT）コラム法実践アプリ
 
 [![CI/CD](https://github.com/d-matsui/kokolog/actions/workflows/test.yml/badge.svg)](https://github.com/d-matsui/kokolog/actions/workflows/test.yml)
-[![Test Coverage](https://img.shields.io/badge/coverage-91%25-brightgreen)](https://github.com/d-matsui/kokolog)
+[![Test Coverage](https://img.shields.io/badge/coverage-97.89%25-brightgreen)](https://github.com/d-matsui/kokolog)
 [![Code Style: Biome](https://img.shields.io/badge/code_style-biome-60a5fa?style=flat&logo=biome)](https://biomejs.dev/)
 
 ## 概要
@@ -39,6 +39,7 @@
 - **Biome** - コードフォーマッティング・リンティング
 - **Jest** - ユニットテスト
 - **React Native Testing Library** - コンポーネントテスト
+- **@types/jest** - TypeScript型定義サポート
 - **GitHub Actions** - CI/CD自動化
 
 ## 開発環境のセットアップ
@@ -101,16 +102,16 @@ npm run type-check # TypeScript型チェック
 
 ### コード品質基準
 
-- **テストカバレッジ**: 80%以上を維持
-- **コードスタイル**: Biomeによる自動フォーマット
-- **型安全性**: TypeScript strict モード
-- **CI/CD**: プルリクエスト時の自動テスト実行
+- **テストカバレッジ**: 97.89%を維持（目標: 95%以上）
+- **コードスタイル**: Biomeによる自動フォーマット・リンティング
+- **型安全性**: TypeScript strict モード + Jest型定義サポート
+- **CI/CD**: プルリクエスト時の自動テスト・品質チェック実行
 
 ## テスト
 
 ### テストスイート構成
 
-- **ユニットテスト**: 91%のコードカバレッジ
+- **ユニットテスト**: 97.89%のコードカバレッジ
 - **統合テスト**: React Context APIとAsyncStorageの連携
 - **コンポーネントテスト**: UIコンポーネントの動作検証
 
@@ -132,17 +133,16 @@ npm run test:coverage
 GitHub Actionsによる自動化:
 
 1. **コード品質チェック**
-   - Biomeによるリンティング
-   - コードフォーマット検証
+   - Biomeによるリンティング・フォーマット検証（統合）
    - TypeScript型チェック
 
 2. **テスト実行**
-   - ユニットテスト
-   - カバレッジレポート生成
+   - ユニットテスト（Jest）
+   - カバレッジレポート生成（Codecov連携）
 
-3. **デプロイ準備**
-   - ビルド検証
+3. **品質保証**
    - 依存関係チェック
+   - TypeScript型安全性検証
 
 ## プロジェクト構造
 
