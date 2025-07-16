@@ -1,407 +1,124 @@
 # ココログ (Kokoro Log)
 
-あなたの心に寄り添う、認知行動療法（CBT）コラム法実践アプリ
+あなたの心に寄り添う、認知行動療法（CBT）7コラム法実践アプリ
 
 [![CI/CD](https://github.com/d-matsui/kokolog/actions/workflows/test.yml/badge.svg)](https://github.com/d-matsui/kokolog/actions/workflows/test.yml)
 [![Test Coverage](https://img.shields.io/badge/coverage-97.89%25-brightgreen)](https://github.com/d-matsui/kokolog)
 [![Code Style: Biome](https://img.shields.io/badge/code_style-biome-60a5fa?style=flat&logo=biome)](https://biomejs.dev/)
 
-## 概要
+## 📱 アプリについて
 
-『ココログ』は、認知行動療法（CBT）の中でも特に効果的とされる「7コラム法」を、スマートフォンで手軽に、そして継続的に実践するために作られたアプリケーションです。
+「紙での実践は大変で続かない」という課題を解決するため、認知行動療法の7コラム法をスマートフォンで手軽に実践できるアプリです。日々の心の動きを記録し、自己理解を深めるパートナーとして設計されています。
 
-このプロジェクトは、「紙での実践は大変で続かない」という個人的な課題を解決するためにスタートしました。日々の心の動きを繊細に捉え、記録し、そして自分の成長を実感することで、自己理解を深める旅路のパートナーとなることを目指しています。
+### 主な機能
 
-## 主な機能
+- **📝 クイックメモ**: 思いついた自動思考をすぐにメモ
+- **📋 7コラム法フォーム**: 状況・気分・思考・根拠・反証・バランス思考・事後気分の入力
+- **😊 多次元感情記録**: 複数の感情を5段階評価で直感的に記録
+- **⭐ 大切な気づき**: 効果的な考えをブックマークして保存
+- **📊 気分グラフ**: 感情の変化を視覚化して成長を実感
+- **🔍 記録管理**: 過去の記録の検索・編集・削除
 
-このアプリは、以下の機能を備えています。
+## 🚀 利用者向け
 
-- **クイックメモ**: 思いついた自動思考を、アプリを開いてすぐにメモできます
-- **7コラム法記録フォーム**: 7つのコラム（状況、気分、自動思考、根拠、反証、バランスの取れた考え、その後の気分）をスムーズに入力できます
-- **多次元の感情記録**: 「不安」「イライラ」といった感情を複数選択し、その強さを絵文字の5段階評価で直感的に記録できます
-- **大切な気づき**: 特に効果的だった「バランスの取れた考え」を★マークでブックマークし、いつでも見返せます
-- **気分グラフ**: 感情ごとの気分の変化を棒グラフで視覚化し、コラム法の効果と自身の成長を実感できます
-- **記録の検索・編集・削除**: 過去の記録を簡単に管理できます
-- **データ永続化**: 記録したデータは、アプリを閉じてもスマートフォン内に安全に保存されます
+### アプリの使い方
 
-## 技術スタック
+1. **Expo Go**をスマートフォンにインストール
+2. [リリースページ](https://github.com/d-matsui/kokolog/releases)から最新版をダウンロード
+3. QRコードをスキャンしてアプリを起動
 
-### フロントエンド
-- **React Native** (Expo SDK 53) - クロスプラットフォーム開発
-- **TypeScript** - 型安全性とコード品質の向上
-- **React Context API** - 状態管理
+### 基本操作
 
-### データ管理
-- **AsyncStorage** - ローカルデータ永続化
-- **react-native-chart-kit** - データ可視化
+- **ホーム画面**: クイックメモで思考を素早く記録
+- **フォーム画面**: 7コラム法の詳細な記録
+- **一覧画面**: 過去の記録を閲覧・編集
+- **グラフ画面**: 気分の変化を視覚的に確認
+- **気づき画面**: ブックマークした重要な考えを確認
 
-### 開発・品質保証
-- **Biome** - コードフォーマッティング・リンティング
-- **Jest** - ユニットテスト
-- **React Native Testing Library** - コンポーネントテスト
-- **@types/jest** - TypeScript型定義サポート
-- **standard-version** - 自動バージョニング・CHANGELOG生成
-- **GitHub Actions** - CI/CD自動化
+## 🛠️ 開発者向け
 
-## 開発環境のセットアップ
+### 技術スタック
 
-### 必要な環境
-- Node.js 18以上
-- npm または yarn
-- Expo CLI
+- **React Native** (Expo SDK 53) + **TypeScript**
+- **AsyncStorage** (データ永続化) + **React Context** (状態管理)
+- **Biome** (リンティング) + **Jest** (テスト) + **GitHub Actions** (CI/CD)
 
-### セットアップ手順
+### 開発環境セットアップ
 
-1. **リポジトリをクローン**
-   ```bash
-   git clone https://github.com/d-matsui/kokolog.git
-   cd kokolog
-   ```
-
-2. **依存関係をインストール**
-   ```bash
-   npm install
-   ```
-
-3. **開発サーバーを起動**
-   ```bash
-   npm start
-   ```
-
-4. **アプリを実行**
-   - スマートフォンでExpo Goアプリを開き、表示されたQRコードをスキャン
-   - または以下のコマンドでシミュレータを起動:
-     ```bash
-     npm run ios     # iOS Simulator
-     npm run android # Android Emulator
-     npm run web     # Web ブラウザ
-     ```
-
-## 開発ワークフロー
-
-### 利用可能なコマンド
+**必要な環境**: Node.js 18以上、Expo CLI
 
 ```bash
-# 開発
+# 1. リポジトリをクローン
+git clone https://github.com/d-matsui/kokolog.git
+cd kokolog
+
+# 2. 依存関係をインストール
+npm install
+
+# 3. 開発サーバーを起動
+npm start
+
+# 4. アプリを実行
+npm run ios     # iOS Simulator
+npm run android # Android Emulator
+npm run web     # Web ブラウザ
+```
+
+### 開発コマンド
+
+```bash
+# 開発・実行
 npm start          # 開発サーバー起動
-npm run ios        # iOS シミュレータ
-npm run android    # Android エミュレータ
-npm run web        # Web ブラウザ
+npm run ios/android/web # 各プラットフォームで実行
 
-# テスト
+# テスト・品質管理
 npm test           # テスト実行
-npm run test:watch # テスト監視モード
-npm run test:coverage # カバレッジ付きテスト
-npm run test:ci    # CI用テスト実行
+npm run lint       # リンティング
+npm run type-check # 型チェック
 
-# コード品質
-npm run lint       # Biomeリンティング
-npm run lint:fix   # 自動修正
-npm run format     # コードフォーマット
-npm run type-check # TypeScript型チェック
-
-# バージョン管理
-npm run version          # 自動バージョン決定・CHANGELOG更新
-npm run version:patch    # パッチバージョンアップ (1.0.0 → 1.0.1)
-npm run version:minor    # マイナーバージョンアップ (1.0.0 → 1.1.0)
-npm run version:major    # メジャーバージョンアップ (1.0.0 → 2.0.0)
-npm run version:prerelease # プレリリースバージョン (1.0.0 → 1.0.1-0)
-npm run version:dry-run  # バージョン変更の確認（実際の変更なし）
+# バージョン管理（セマンティックバージョニング）
+npm run version    # 自動バージョン決定・CHANGELOG更新
 ```
 
-### コード品質基準
+### 品質基準
 
-- **テストカバレッジ**: 97.89%を維持（目標: 95%以上）
+- **テストカバレッジ**: 95%以上を維持（現在: 97.89%）
 - **コードスタイル**: Biomeによる自動フォーマット・リンティング
-- **型安全性**: TypeScript strict モード + Jest型定義サポート
-- **CI/CD**: プルリクエスト時の自動テスト・品質チェック実行
+- **型安全性**: TypeScript strict モード
 
-## セマンティックバージョニング
-
-このプロジェクトは[Semantic Versioning](https://semver.org/lang/ja/)に準拠したバージョン管理を行っています。
-
-### バージョン形式
-
-`MAJOR.MINOR.PATCH` (例: `1.2.3`)
-
-- **MAJOR**: 破壊的変更を含むリリース
-- **MINOR**: 後方互換性を保った機能追加
-- **PATCH**: 後方互換性を保ったバグ修正
-
-### 自動バージョニングプロセス
-
-1. **コミットメッセージ**: [Conventional Commits](https://www.conventionalcommits.org/ja/)形式でコミット
-2. **自動解析**: standard-versionがコミットメッセージを解析
-3. **バージョン決定**: 変更内容に基づいてバージョンを自動決定
-4. **更新作業**: package.json更新、CHANGELOG.md生成、Gitタグ作成
-
-### コミットメッセージ形式
-
-```
-<type>[optional scope]: <description>
-
-[optional body]
-
-[optional footer(s)]
-```
-
-#### 主要なコミットタイプ
-
-- `feat`: 新機能追加 (MINOR version up)
-- `fix`: バグ修正 (PATCH version up)
-- `docs`: ドキュメント変更 (PATCH version up)
-- `style`: コードフォーマット (PATCH version up)
-- `refactor`: リファクタリング (PATCH version up)
-- `test`: テスト追加・修正 (PATCH version up)
-- `ci`: CI/CD設定変更 (PATCH version up)
-- `chore`: その他の変更 (PATCH version up)
-
-#### 破壊的変更
-
-```
-feat!: remove deprecated API endpoint
-
-BREAKING CHANGE: API endpoint /old-api has been removed
-```
-
-### バージョニング例
-
-```bash
-# コミット後にバージョン更新
-git commit -m "fix: resolve form validation issue"
-npm run version  # 1.0.0 → 1.0.1 (patch)
-
-git commit -m "feat: add mood export functionality"
-npm run version  # 1.0.1 → 1.1.0 (minor)
-
-git commit -m "feat!: restructure data storage format
-
-BREAKING CHANGE: Data format has changed, migration required"
-npm run version  # 1.1.0 → 2.0.0 (major)
-
-# 手動でバージョンタイプを指定
-npm run version:patch    # パッチバージョンを強制
-npm run version:minor    # マイナーバージョンを強制
-npm run version:major    # メジャーバージョンを強制
-
-# バージョン変更を事前確認
-npm run version:dry-run  # 実際の変更なしで確認
-```
-
-## テスト
-
-### テストスイート構成
-
-- **ユニットテスト**: 97.89%のコードカバレッジ
-- **統合テスト**: React Context APIとAsyncStorageの連携
-- **コンポーネントテスト**: UIコンポーネントの動作検証
-
-### テスト実行
-
-```bash
-# 全テスト実行
-npm test
-
-# 監視モード
-npm run test:watch
-
-# カバレッジレポート生成
-npm run test:coverage
-```
-
-## CI/CD パイプライン
-
-GitHub Actionsによる自動化:
-
-1. **コード品質チェック**
-   - Biomeによるリンティング・フォーマット検証（統合）
-   - TypeScript型チェック
-
-2. **テスト実行**
-   - ユニットテスト（Jest）
-   - カバレッジレポート生成
-
-3. **品質保証**
-   - 依存関係チェック
-   - TypeScript型安全性検証
-
-4. **Claude統合**
-   - `@claude`メンション時の自動応答
-   - プルリクエストの自動コードレビュー
-   - Issue駆動開発のサポート
-
-5. **バージョン管理**
-   - セマンティックバージョニング
-   - CHANGELOG.md自動生成
-   - コミットメッセージに基づく自動バージョン決定
-
-### ワークフロー改善提案
-
-現在のGitHub Actionsワークフローには以下の改善案があります：
-
-#### test.yml の改善案
-- **キャッシュ最適化**: Node.jsモジュールとBiomeキャッシュの活用
-- **セキュリティ監査**: `npm audit`による依存関係脆弱性チェック
-- **アーティファクト保存**: テストカバレッジレポートの保存・公開
-- **並列実行**: リンティング、型チェック、テストの並列化による高速化
-- **Node.jsバージョンマトリックス**: 複数バージョンでの互換性テスト
-
-#### claude.yml の改善案
-- **カスタムツール許可**: `allowed_tools`でnpm run lint、testコマンドの実行許可
-- **カスタム指示**: プロジェクト固有のコーディング規約の追加
-- **環境変数**: テスト環境での実行設定
-
-#### claude-code-review.yml の改善案
-- **条件付きレビュー**: ファイル変更パスに基づくレビュー実行
-- **スティッキーコメント**: 同一PRでのコメント再利用による整理
-- **段階的レビュー**: 初回コントリビューター向けの詳細説明付きレビュー
-
-## Issue駆動開発ワークフロー
-
-このプロジェクトでは、Claude統合によるIssue駆動開発（Issue-Driven Development）を採用しています。
-
-### 基本的な開発フロー
-
-1. **Issue作成**
-   - 機能追加、バグ修正、改善提案などのIssueを作成
-   - 明確なタイトルと詳細な説明を記載
-
-2. **Claude連携**
-   - Issueの説明に`@claude`を含めてClaudeに実装を依頼
-   - 例: `@claude この機能を実装してください`
-
-3. **自動実装**
-   - ClaudeがIssueを分析し、実装プランを作成
-   - 自動的にブランチ作成、コード実装、テスト実行
-   - プルリクエストの作成
-
-4. **レビュー・マージ**
-   - 自動生成されたPRをレビュー
-   - 必要に応じて追加の修正を`@claude`で依頼
-   - 承認後にマージ
-
-### Claude活用のベストプラクティス
-
-#### Issue作成時
-```markdown
-## 概要
-新しい感情カテゴリ「集中」を追加したい
-
-## 詳細
-- emotions.tsに「集中」感情を追加
-- 対応する絵文字と5段階評価を設定
-- MoodInputコンポーネントでの表示確認
-
-## 受け入れ条件
-- [ ] emotions.tsに新しい感情が追加されている
-- [ ] MoodInputで正常に表示される
-- [ ] 既存のテストが通る
-
-@claude この機能を実装してください
-```
-
-#### プルリクエストレビュー
-- Claudeが自動でコードレビューを実行
-- セキュリティ、パフォーマンス、ベストプラクティスをチェック
-- 建設的なフィードバックを提供
-
-#### 追加修正依頼
-```markdown
-@claude テストカバレッジが下がっているので、
-新しい感情カテゴリのテストを追加してください
-```
-
-### 対応可能なタスク
-
-#### ✅ Claudeが対応可能
-- 新機能の実装
-- バグ修正
-- リファクタリング
-- テスト追加
-- ドキュメント更新
-- コードレビュー
-- 依存関係の更新
-
-#### ❌ 手動対応が必要
-- デザイン・UI/UXの判断
-- 外部サービス連携の設定
-- 本番環境へのデプロイ
-- プロジェクト方針の決定
-
-### 連携のメリット
-
-1. **開発速度の向上**: アイデアから実装までの時間短縮
-2. **品質の保持**: 自動テスト・リンティング・レビューによる品質担保
-3. **学習機会**: Claudeの実装を参考にしたスキル向上
-4. **ドキュメント化**: 実装過程が自動的に記録される
-
-## プロジェクト構造
+### プロジェクト構造
 
 ```
 src/
-├── components/          # 再利用可能なUIコンポーネント
-│   ├── FormInput.tsx
-│   ├── MoodInput.tsx
-│   └── __tests__/       # コンポーネントテスト
-├── constants/           # アプリケーション定数
-│   └── emotions.ts
-├── context/            # React Context API
-│   └── LogContext.tsx
-├── screens/            # 画面コンポーネント
-│   ├── FormScreen.tsx
-│   ├── GraphScreen.tsx
-│   └── __tests__/      # 画面テスト
-├── styles/             # スタイル定義
-├── types/              # TypeScript型定義
-└── __tests__/          # テストユーティリティ
+├── components/     # UIコンポーネント (FormInput, MoodInput等)
+├── context/        # React Context (LogContext)
+├── screens/        # 画面コンポーネント (Form, Graph, List等)
+├── constants/      # 定数 (emotions.ts)
+├── types/          # TypeScript型定義
+└── __tests__/      # テスト
 ```
 
-## 設計思想
+### 貢献方法
 
-- **目的**: コラム法の実践における「手間」と「継続の難しさ」を解消し、ユーザーが自身の「成長と回復」を実感できる、心強いパートナーとなること
-- **提供価値**: 浮かび上がった思考を瞬時にメモし、独自の「多次元気分入力」で心の状態を繊細に記録。記録は「グラフ」や「大切な気づき」として視覚化され、あなたの頑張りと成長を実感させてくれる
-- **差別化**: 「7コラム法の実践」に徹底的に特化したシンプルさと、「続けることが楽しくなる」ポジティブなフィードバックループを提供する
+#### Issue駆動開発（推奨）
+1. **Issue作成**: バグ報告や機能要望を記載
+2. **Claude連携**: `@claude` メンションで自動実装を依頼
+3. **レビュー**: 生成されたPRをレビュー
 
-## 貢献・開発参加
+#### 従来の方法
+- **プルリクエスト**: 直接的なコード改善
+- **テスト**: 新機能のテスト作成
 
-### 推奨: Issue駆動開発による貢献
-
-1. **Issue作成**: バグ報告や機能要望を明確に記載
-2. **Claude連携**: `@claude`メンションで自動実装を依頼
-3. **レビュー参加**: 自動生成されたPRのレビュー
-4. **フィードバック**: Claudeの実装に対する改善提案
-
-### 従来の貢献方法
-
-1. **プルリクエスト**: 直接的なコード改善の提案
-2. **テスト**: 新機能のテスト作成
-3. **ドキュメント**: 使用方法やAPIドキュメントの改善
-
-### 開発ガイドライン
-
-- Issue駆動開発を積極的に活用する
-- PRを作成する前に `npm run lint` と `npm test` を実行
-- コミットメッセージは [Conventional Commits](https://www.conventionalcommits.org/) に従う
-- 新機能にはテストを含める
-- `@claude`による自動実装も品質基準を満たす必要がある
-
-## 今後のロードマップ
-
-- [ ] 検索機能の実装
-- [ ] ウィークリーレポート機能の実装
-- [ ] UI/UXの継続的な改善
-- [ ] データエクスポート機能
-- [ ] 多言語対応
-- [ ] アクセシビリティの向上
-
-## ライセンス
-
-このプロジェクトは [MIT License](LICENSE) の下で公開されています。
-
-## 開発者
-
-[@d-matsui](https://github.com/d-matsui) - プロジェクト作成者・メンテナー
+#### 開発ガイドライン
+- コミットは [Conventional Commits](https://www.conventionalcommits.org/) 形式
+- PR前に `npm run lint` と `npm test` を実行
+- 新機能には必ずテストを含める
 
 ---
 
-このプロジェクトが、認知行動療法の実践をより身近で継続的なものにし、多くの人の心の健康をサポートできることを願っています。
+## 📄 ライセンス・開発者
+
+- **ライセンス**: [MIT License](LICENSE)
+- **開発者**: [@d-matsui](https://github.com/d-matsui)
+
+**このアプリが、認知行動療法の実践をより身近で継続的なものにし、多くの人の心の健康をサポートできることを願っています。**
