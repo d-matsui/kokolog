@@ -24,4 +24,5 @@ export interface LogContextType {
 	deleteLog: (logId: string) => void;
 	toggleFavorite: (logId: string) => void;
 	clearAllLogs: () => Promise<void>;
+	insertTestData: () => Promise<void>;
 }

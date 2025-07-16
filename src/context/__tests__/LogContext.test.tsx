@@ -260,6 +260,89 @@ describe("LogContext", () => {
 		});
 	});
 
+	describe("insertTestData", () => {
+		it("should insert 5 test logs successfully", async () => {
+			mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify([]));
+			mockAsyncStorage.setItem.mockResolvedValue();
+
+			const { result } = renderLogContext();
+
+			await act(async () => {
+				await new Promise((resolve) => setTimeout(resolve, 0));
+			});
+
+			await act(async () => {
+				result.current.insertTestData();
+			});
+
+			expect(result.current.logs).toHaveLength(5);
+			expect(mockAlert.alert).toHaveBeenCalledWith(
+				"完了",
+				"5件のテストデータを挿入しました。",
+			);
+
+			// Verify that all test logs have required properties
+			result.current.logs.forEach((log) => {
+				expect(log).toMatchObject({
+					id: expect.any(String),
+					date: expect.any(String),
+					situation: expect.any(String),
+					autoThought: expect.any(String),
+					beforeMoods: expect.any(Array),
+					afterMoods: expect.any(Array),
+					evidence: expect.any(String),
+					counterEvidence: expect.any(String),
+					newThought: expect.any(String),
+					isFavorite: expect.any(Boolean),
+				});
+			});
+		});
+
+		it("should prepend test data to existing logs", async () => {
+			mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify([mockLog]));
+			mockAsyncStorage.setItem.mockResolvedValue();
+
+			const { result } = renderLogContext();
+
+			await act(async () => {
+				await new Promise((resolve) => setTimeout(resolve, 0));
+			});
+
+			await act(async () => {
+				result.current.insertTestData();
+			});
+
+			expect(result.current.logs).toHaveLength(6); // 5 test logs + 1 existing
+			// The original log should be at the end since new logs are prepended
+			expect(result.current.logs[5]).toEqual(mockLog);
+		});
+
+		it("should complete successfully even with storage errors", async () => {
+			mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify([]));
+			// Mock setItem to fail (this affects persistence but not the insertTestData function directly)
+			mockAsyncStorage.setItem.mockRejectedValue(new Error("Storage error"));
+
+			const { result } = renderLogContext();
+
+			await act(async () => {
+				await new Promise((resolve) => setTimeout(resolve, 0));
+			});
+
+			await act(async () => {
+				result.current.insertTestData();
+			});
+
+			// insertTestData should still complete successfully since it doesn't directly handle AsyncStorage
+			expect(mockAlert.alert).toHaveBeenCalledWith(
+				"完了",
+				"5件のテストデータを挿入しました。",
+			);
+
+			// Verify that logs were added to state even if persistence failed
+			expect(result.current.logs).toHaveLength(5);
+		});
+	});
+
 	describe("persistence", () => {
 		it("should save logs to AsyncStorage when logs change", async () => {
 			mockAsyncStorage.getItem.mockResolvedValue(null);

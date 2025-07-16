@@ -126,6 +126,7 @@ describe("Type definitions", () => {
 				deleteLog: jest.fn(),
 				toggleFavorite: jest.fn(),
 				clearAllLogs: jest.fn(),
+				insertTestData: jest.fn(),
 			};
 
 			expect(Array.isArray(mockContext.logs)).toBe(true);
@@ -135,6 +136,7 @@ describe("Type definitions", () => {
 			expect(typeof mockContext.deleteLog).toBe("function");
 			expect(typeof mockContext.toggleFavorite).toBe("function");
 			expect(typeof mockContext.clearAllLogs).toBe("function");
+			expect(typeof mockContext.insertTestData).toBe("function");
 		});
 	});
 
