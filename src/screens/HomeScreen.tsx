@@ -61,8 +61,13 @@ const HomeScreen = ({
 					<TouchableOpacity style={styles.clearButton} onPress={confirmClear}>
 						<Text style={styles.clearButtonText}>全データクリア（開発用）</Text>
 					</TouchableOpacity>
-					<TouchableOpacity style={styles.clearButton} onPress={confirmInsertTestData}>
-						<Text style={styles.clearButtonText}>テストデータ挿入（開発用）</Text>
+					<TouchableOpacity
+						style={styles.clearButton}
+						onPress={confirmInsertTestData}
+					>
+						<Text style={styles.clearButtonText}>
+							テストデータ挿入（開発用）
+						</Text>
 					</TouchableOpacity>
 				</View>
 			</View>
