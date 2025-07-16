@@ -57,12 +57,9 @@ export function useAsyncStorage<T>(
 		}
 	}, [key, initialValue]);
 
-	const updateData = useCallback(
-		(value: T | ((prevData: T) => T)) => {
-			setData(value);
-		},
-		[],
-	);
+	const updateData = useCallback((value: T | ((prevData: T) => T)) => {
+		setData(value);
+	}, []);
 
 	return { data, isLoading, error, setData: updateData, removeData };
 }

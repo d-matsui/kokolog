@@ -34,9 +34,7 @@ export const LogItem = ({ log, onPress }: LogItemProps) => {
 		<TouchableOpacity style={styles.logItem} onPress={() => onPress(log)}>
 			<View style={styles.logItemHeader}>
 				<Text style={styles.logDate}>{formatLogDate(log.date)}</Text>
-				{log.isFavorite && (
-					<Text style={styles.favoriteIconActive}>⭐</Text>
-				)}
+				{log.isFavorite && <Text style={styles.favoriteIconActive}>⭐</Text>}
 			</View>
 			<Text style={styles.logThought} numberOfLines={2}>
 				{log.situation}
