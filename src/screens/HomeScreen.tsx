@@ -16,11 +16,17 @@ const HomeScreen = ({
 	onShowForm,
 	onQuickSave,
 }: HomeScreenProps) => {
-	const { clearAllLogs } = useLogs();
+	const { clearAllLogs, insertTestData } = useLogs();
 	const confirmClear = () =>
 		Alert.alert("データの完全消去", "本当にすべてのデータを削除しますか？", [
 			{ text: "キャンセル", style: "cancel" },
 			{ text: "クリアする", style: "destructive", onPress: clearAllLogs },
+		]);
+
+	const confirmInsertTestData = () =>
+		Alert.alert("テストデータの挿入", "5件のテストデータを挿入しますか？", [
+			{ text: "キャンセル", style: "cancel" },
+			{ text: "挿入する", onPress: insertTestData },
 		]);
 
 	return (
@@ -54,6 +60,9 @@ const HomeScreen = ({
 					</TouchableOpacity>
 					<TouchableOpacity style={styles.clearButton} onPress={confirmClear}>
 						<Text style={styles.clearButtonText}>全データクリア（開発用）</Text>
+					</TouchableOpacity>
+					<TouchableOpacity style={styles.clearButton} onPress={confirmInsertTestData}>
+						<Text style={styles.clearButtonText}>テストデータ挿入（開発用）</Text>
 					</TouchableOpacity>
 				</View>
 			</View>
