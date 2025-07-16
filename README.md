@@ -40,6 +40,7 @@
 - **Jest** - ユニットテスト
 - **React Native Testing Library** - コンポーネントテスト
 - **@types/jest** - TypeScript型定義サポート
+- **standard-version** - 自動バージョニング・CHANGELOG生成
 - **GitHub Actions** - CI/CD自動化
 
 ## 開発環境のセットアップ
@@ -98,6 +99,14 @@ npm run lint       # Biomeリンティング
 npm run lint:fix   # 自動修正
 npm run format     # コードフォーマット
 npm run type-check # TypeScript型チェック
+
+# バージョン管理
+npm run version          # 自動バージョン決定・CHANGELOG更新
+npm run version:patch    # パッチバージョンアップ (1.0.0 → 1.0.1)
+npm run version:minor    # マイナーバージョンアップ (1.0.0 → 1.1.0)
+npm run version:major    # メジャーバージョンアップ (1.0.0 → 2.0.0)
+npm run version:prerelease # プレリリースバージョン (1.0.0 → 1.0.1-0)
+npm run version:dry-run  # バージョン変更の確認（実際の変更なし）
 ```
 
 ### コード品質基準
@@ -106,6 +115,78 @@ npm run type-check # TypeScript型チェック
 - **コードスタイル**: Biomeによる自動フォーマット・リンティング
 - **型安全性**: TypeScript strict モード + Jest型定義サポート
 - **CI/CD**: プルリクエスト時の自動テスト・品質チェック実行
+
+## セマンティックバージョニング
+
+このプロジェクトは[Semantic Versioning](https://semver.org/lang/ja/)に準拠したバージョン管理を行っています。
+
+### バージョン形式
+
+`MAJOR.MINOR.PATCH` (例: `1.2.3`)
+
+- **MAJOR**: 破壊的変更を含むリリース
+- **MINOR**: 後方互換性を保った機能追加
+- **PATCH**: 後方互換性を保ったバグ修正
+
+### 自動バージョニングプロセス
+
+1. **コミットメッセージ**: [Conventional Commits](https://www.conventionalcommits.org/ja/)形式でコミット
+2. **自動解析**: standard-versionがコミットメッセージを解析
+3. **バージョン決定**: 変更内容に基づいてバージョンを自動決定
+4. **更新作業**: package.json更新、CHANGELOG.md生成、Gitタグ作成
+
+### コミットメッセージ形式
+
+```
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+#### 主要なコミットタイプ
+
+- `feat`: 新機能追加 (MINOR version up)
+- `fix`: バグ修正 (PATCH version up)
+- `docs`: ドキュメント変更 (PATCH version up)
+- `style`: コードフォーマット (PATCH version up)
+- `refactor`: リファクタリング (PATCH version up)
+- `test`: テスト追加・修正 (PATCH version up)
+- `ci`: CI/CD設定変更 (PATCH version up)
+- `chore`: その他の変更 (PATCH version up)
+
+#### 破壊的変更
+
+```
+feat!: remove deprecated API endpoint
+
+BREAKING CHANGE: API endpoint /old-api has been removed
+```
+
+### バージョニング例
+
+```bash
+# コミット後にバージョン更新
+git commit -m "fix: resolve form validation issue"
+npm run version  # 1.0.0 → 1.0.1 (patch)
+
+git commit -m "feat: add mood export functionality"
+npm run version  # 1.0.1 → 1.1.0 (minor)
+
+git commit -m "feat!: restructure data storage format
+
+BREAKING CHANGE: Data format has changed, migration required"
+npm run version  # 1.1.0 → 2.0.0 (major)
+
+# 手動でバージョンタイプを指定
+npm run version:patch    # パッチバージョンを強制
+npm run version:minor    # マイナーバージョンを強制
+npm run version:major    # メジャーバージョンを強制
+
+# バージョン変更を事前確認
+npm run version:dry-run  # 実際の変更なしで確認
+```
 
 ## テスト
 
@@ -148,6 +229,11 @@ GitHub Actionsによる自動化:
    - `@claude`メンション時の自動応答
    - プルリクエストの自動コードレビュー
    - Issue駆動開発のサポート
+
+5. **バージョン管理**
+   - セマンティックバージョニング
+   - CHANGELOG.md自動生成
+   - コミットメッセージに基づく自動バージョン決定
 
 ### ワークフロー改善提案
 
